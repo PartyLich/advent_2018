@@ -8,6 +8,9 @@ use regex::Regex;
 
 use crate::read_file;
 
+mod two;
+pub use two::two;
+
 /// Parse a step and its precondition from str
 fn parse_line(input: &str) -> Result<(char, char), &'static str> {
     lazy_static! {
