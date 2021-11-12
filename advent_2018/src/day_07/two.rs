@@ -134,8 +134,29 @@ mod test {
     #[test]
     fn part_two() {
         let msg = "should return the total assembly time in seconds";
-        let expected = 15;
-        let actual = two("input/7-t.txt");
+
+        let remaining: HashMap<char, HashSet<char>> = read_file("input/7-t.txt")
+            .lines()
+            .map(|line| parse_line(line).unwrap())
+            .fold(HashMap::new(), |mut acc, next| {
+                let parent = acc.entry(next.0).or_default().clone();
+                let ancestors = acc.entry(next.1).or_default();
+                ancestors.extend([next.0]);
+                ancestors.extend(parent);
+
+                acc
+            });
+        let iter = StateIter(
+            State {
+                remaining,
+                worker_max: 2,
+                ..Default::default()
+            },
+            0,
+        );
+
+        let expected = 258;
+        let actual = iter.last().unwrap();
         assert_eq!(actual, expected, "{}", msg);
     }
 }
