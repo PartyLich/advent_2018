@@ -41,7 +41,11 @@ static SOLUTIONS: &[Option<Solution<String>>] = &[
     None,
     None,
     None,
-    Some(to_solution!("7-1", (day_07::one, "Step Order"))),
+    Some(to_solution!(
+        "7-1",
+        (day_07::one, "Step Order"),
+        (day_07::two, "Completion time")
+    )),
 ];
 
 /// run a single day
