@@ -36,6 +36,12 @@ fn solve_day<T>(file: &'static str) -> impl Fn(Solver<T>) -> (T, Duration) {
 
 static SOLUTIONS: &[Option<Solution<String>>] = &[
     None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    Some(to_solution!("7-1", (day_07::one, "Step Order"))),
 ];
 
 /// run a single day
