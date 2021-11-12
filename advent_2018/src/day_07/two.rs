@@ -24,13 +24,11 @@ struct State {
     in_progress: HashSet<(char, usize)>,
     /// Maximum available workers to complete steps
     worker_max: usize,
+    /// Time
+    time: usize,
 }
 
-/// An iterator over the step completion times
-#[derive(Debug, Default)]
-struct StateIter(State, usize);
-
-impl Iterator for StateIter {
+impl Iterator for State {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -40,12 +38,12 @@ impl Iterator for StateIter {
             used,
             worker_max,
             in_progress,
-        } = &mut self.0;
-        let t = self.1;
+            time,
+        } = self;
 
         // move completed steps
         in_progress.retain(|(ch, completion)| {
-            if *completion <= t {
+            if *completion <= *time {
                 used.insert(*ch);
                 false
             } else {
@@ -67,7 +65,7 @@ impl Iterator for StateIter {
         // start work on available steps
         while (in_progress.len() < *worker_max) && !available.is_empty() {
             let ch = available.pop().unwrap().0;
-            let completion = t + get_time(ch);
+            let completion = *time + get_time(ch);
             in_progress.insert((ch, completion));
         }
 
@@ -76,14 +74,13 @@ impl Iterator for StateIter {
             return None;
         }
 
-        let next_done = in_progress
+        *time = in_progress
             .iter()
             .min_by(|a, b| a.1.cmp(&b.1))
             .map(|(_, time)| *time)
             .unwrap();
-        self.1 = next_done;
 
-        Some(next_done)
+        Some(*time)
     }
 }
 
@@ -105,12 +102,11 @@ pub fn two(file_path: &str) -> usize {
                 acc
             },
         );
-    let state = State {
+    let iter = State {
         remaining,
         worker_max: WORKERS,
         ..Default::default()
     };
-    let iter = StateIter(state, 0);
 
     iter.last().unwrap()
 }
@@ -146,14 +142,11 @@ mod test {
 
                 acc
             });
-        let iter = StateIter(
-            State {
-                remaining,
-                worker_max: 2,
-                ..Default::default()
-            },
-            0,
-        );
+        let iter = State {
+            remaining,
+            worker_max: 2,
+            ..Default::default()
+        };
 
         let expected = 258;
         let actual = iter.last().unwrap();
