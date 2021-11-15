@@ -85,9 +85,19 @@ fn run_range(range: RangeInclusive<usize>) {
     println!();
 }
 
+/// clear the terminal
+fn clear_screen() {
+    const ESC: char = 0x1B as char;
+    const SOFT_CLEAR: &str = "\x1B[2J\x1B[1;1H";
+    print!("{}", SOFT_CLEAR);
+    // const HARD_CLEAR: &str = "\x1Bc";
+    // print!("{}", HARD_CLEAR);
+}
+
 fn main() {
     let mut input = String::new();
 
+    clear_screen();
     loop {
         println!("Which day would you like to run?");
         println!("  a      for all days");
@@ -100,7 +110,7 @@ fn main() {
         io::stdin()
             .read_line(&mut input)
             .expect("Failed to read line");
-        println!();
+        clear_screen();
 
         match input.parse() {
             Ok(Command::Quit) => {
