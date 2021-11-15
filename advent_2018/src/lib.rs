@@ -5,6 +5,8 @@ use std::{fmt, fs, ops::RangeInclusive, path::Path};
 
 use parser::three::lib::{any_of, choice, keep_first, p_char, p_int, spaces};
 
+pub mod day_07;
+
 /// read the specified file at `file_path` into a `String`
 ///
 /// Panic! on error
